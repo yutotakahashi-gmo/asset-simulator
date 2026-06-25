@@ -343,4 +343,19 @@ function renderDoughnut(principal,contrib,interest){
     data:{labels:['元本','積立合計','利息合計'],
       datasets:[{data:[principal,contrib,interest],
         backgroundColor:['#0099ff','#00d4ff','#7af0ff'],borderColor:'#121826',borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:fal
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+      plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.6)',padding:14,font:{size:12}}},
+        tooltip:{callbacks:{label:c=>c.label+': ¥'+Math.round(c.parsed).toLocaleString('ja-JP')}}}}
+  });
+}
+
+// 上部の固定inputにリスナー
+['startAge','initial'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',calculate);
+});
+
+renderStages();
+calculate();
+</script>
+</body>
+</html>

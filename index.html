@@ -90,10 +90,11 @@
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   }
   .result-main .val-sub{font-size:26px;font-weight:700;color:#7af0ff;line-height:1.2;word-break:break-all}
-  .milestones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-  .ms{background:var(--panel2);border-radius:12px;padding:16px;text-align:center}
+  .milestones{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .ms{background:var(--panel2);border-radius:10px;padding:12px 6px;text-align:center}
   .ms .cap{font-size:11px;color:var(--muted)}
-  .ms .age{font-size:24px;font-weight:700;color:var(--accent);margin-top:4px}
+  .ms .age{font-size:19px;font-weight:700;color:var(--accent);margin-top:4px}
+  @media(max-width:520px){.milestones{grid-template-columns:repeat(3,1fr)}}
 
   .charts{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;margin-top:24px}
   .chart-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;min-width:0}
@@ -164,9 +165,11 @@
           <div class="val-sub" id="finalReal">¥0</div>
         </div>
         <div class="milestones">
-          <div class="ms"><div class="cap">1億円 達成</div><div class="age" id="ms1">−</div></div>
-          <div class="ms"><div class="cap">2億円 達成</div><div class="age" id="ms2">−</div></div>
-          <div class="ms"><div class="cap">5億円 達成</div><div class="age" id="ms5">−</div></div>
+          <div class="ms"><div class="cap">1億円</div><div class="age" id="ms1">−</div></div>
+          <div class="ms"><div class="cap">2億円</div><div class="age" id="ms2">−</div></div>
+          <div class="ms"><div class="cap">3億円</div><div class="age" id="ms3">−</div></div>
+          <div class="ms"><div class="cap">4億円</div><div class="age" id="ms4">−</div></div>
+          <div class="ms"><div class="cap">5億円</div><div class="age" id="ms5">−</div></div>
         </div>
       </div>
     </div>
@@ -260,7 +263,7 @@ function calculate(){
   let asset=initial, contribTotal=0, interestTotal=0;
   let age=start;
   const rows=[], labels=[], totals=[];
-  let hit1=null, hit2=null, hit5=null;
+  let hit1=null, hit2=null, hit3=null, hit4=null, hit5=null;
 
   for(const st of stages){
     const annual=st.m*10000*12;
@@ -275,6 +278,8 @@ function calculate(){
       age += 1;
       if(hit1===null && asset>=100000000) hit1=age;
       if(hit2===null && asset>=200000000) hit2=age;
+      if(hit3===null && asset>=300000000) hit3=age;
+      if(hit4===null && asset>=400000000) hit4=age;
       if(hit5===null && asset>=500000000) hit5=age;
       rows.push({age, principal:initial, annual, contribTotal, interest, interestTotal, total:asset, real:realOf(asset,age), reached:asset>=200000000});
       labels.push(age+'歳');
@@ -286,6 +291,8 @@ function calculate(){
   document.getElementById('finalReal').textContent=yen(realOf(asset,age));
   document.getElementById('ms1').textContent = hit1!==null ? hit1+'歳' : '−';
   document.getElementById('ms2').textContent = hit2!==null ? hit2+'歳' : '−';
+  document.getElementById('ms3').textContent = hit3!==null ? hit3+'歳' : '−';
+  document.getElementById('ms4').textContent = hit4!==null ? hit4+'歳' : '−';
   document.getElementById('ms5').textContent = hit5!==null ? hit5+'歳' : '−';
 
   renderTable(rows);

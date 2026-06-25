@@ -89,6 +89,7 @@
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   }
+  .result-main .val-sub{font-size:26px;font-weight:700;color:#7af0ff;line-height:1.2;word-break:break-all}
   .milestones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
   .ms{background:var(--panel2);border-radius:12px;padding:16px;text-align:center}
   .ms .cap{font-size:11px;color:var(--muted)}
@@ -143,6 +144,7 @@
         <span class="heading">条件入力</span>
         <div class="mini"><label>開始年齢</label><input type="number" id="startAge" value="24"></div>
         <div class="mini"><label>初期資産（万円）</label><input type="number" id="initial" value="1000"></div>
+        <div class="mini"><label>インフレ率（%）</label><input type="number" id="inflation" value="2" step="0.1"></div>
       </div>
 
       <div class="stages-head">
@@ -156,8 +158,10 @@
     <div class="panel">
       <div class="results">
         <div class="result-main">
-          <div class="cap">最終運用結果</div>
+          <div class="cap">最終運用結果（名目）</div>
           <div class="val" id="finalVal">¥0</div>
+          <div class="cap" style="margin-top:10px">実質（現在の購買力）</div>
+          <div class="val-sub" id="finalReal">¥0</div>
         </div>
         <div class="milestones">
           <div class="ms"><div class="cap">1億円 達成</div><div class="age" id="ms1">−</div></div>
@@ -185,7 +189,7 @@
       <thead>
         <tr>
           <th>年（歳）</th><th>元本</th><th>年間積立</th><th>積立合計</th>
-          <th>年間利息</th><th>利息合計</th><th>結果</th>
+          <th>年間利息</th><th>利息合計</th><th>結果（名目）</th><th>結果（実質）</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -250,6 +254,8 @@ function applyMode(mode){
 function calculate(){
   const start=num('startAge');
   const initial=num('initial')*10000;
+  const infl=num('inflation')/100;
+  const realOf=(v,age)=>v/Math.pow(1+infl, Math.max(0,age-start)); // 現在価値換算
 
   let asset=initial, contribTotal=0, interestTotal=0;
   let age=start;
@@ -270,13 +276,14 @@ function calculate(){
       if(hit1===null && asset>=100000000) hit1=age;
       if(hit2===null && asset>=200000000) hit2=age;
       if(hit5===null && asset>=500000000) hit5=age;
-      rows.push({age, principal:initial, annual, contribTotal, interest, interestTotal, total:asset, reached:asset>=200000000});
+      rows.push({age, principal:initial, annual, contribTotal, interest, interestTotal, total:asset, real:realOf(asset,age), reached:asset>=200000000});
       labels.push(age+'歳');
       totals.push(Math.round(asset));
     }
   }
 
   document.getElementById('finalVal').textContent=yen(asset);
+  document.getElementById('finalReal').textContent=yen(realOf(asset,age));
   document.getElementById('ms1').textContent = hit1!==null ? hit1+'歳' : '−';
   document.getElementById('ms2').textContent = hit2!==null ? hit2+'歳' : '−';
   document.getElementById('ms5').textContent = hit5!==null ? hit5+'歳' : '−';
@@ -296,6 +303,7 @@ function renderTable(rows){
       <td>${yen(r.interest)}</td>
       <td>${yen(r.interestTotal)}</td>
       <td class="res">${yen(r.total)}</td>
+      <td>${yen(r.real)}</td>
     </tr>`).join('');
 }
 
@@ -350,7 +358,7 @@ function renderDoughnut(principal,contrib,interest){
 }
 
 // 上部の固定inputにリスナー
-['startAge','initial'].forEach(id=>{
+['startAge','initial','inflation'].forEach(id=>{
   document.getElementById(id).addEventListener('input',calculate);
 });
 

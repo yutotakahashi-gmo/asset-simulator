@@ -2,8 +2,15 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>資産形成シミュレーター</title>
+<!-- iPhone（ホーム画面に追加）対応 -->
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="資産形成">
+<meta name="theme-color" content="#0a0e17">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -336,19 +343,4 @@ function renderDoughnut(principal,contrib,interest){
     data:{labels:['元本','積立合計','利息合計'],
       datasets:[{data:[principal,contrib,interest],
         backgroundColor:['#0099ff','#00d4ff','#7af0ff'],borderColor:'#121826',borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-      plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.6)',padding:14,font:{size:12}}},
-        tooltip:{callbacks:{label:c=>c.label+': ¥'+Math.round(c.parsed).toLocaleString('ja-JP')}}}}
-  });
-}
-
-// 上部の固定inputにリスナー
-['startAge','initial'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',calculate);
-});
-
-renderStages();
-calculate();
-</script>
-</body>
-</html>
+    options:{responsive:true,maintainAspectRatio:fal
